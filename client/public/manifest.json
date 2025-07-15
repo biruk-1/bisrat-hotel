@@ -1,0 +1,47 @@
+{
+  "short_name": "POS System",
+  "name": "POS System - Point of Sale with Offline Support",
+  "description": "A Point of Sale system with full offline support",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "orientation": "any",
+  "scope": "/",
+  "categories": ["business", "restaurant", "food", "point-of-sale", "productivity"],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png"
+    }
+  ],
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "New Order",
+      "short_name": "Order",
+      "description": "Create a new food or drink order",
+      "url": "/cashier/order-entry"
+    },
+    {
+      "name": "Kitchen View",
+      "short_name": "Kitchen",
+      "description": "View food orders for kitchen staff",
+      "url": "/kitchen"
+    },
+    {
+      "name": "Bartender View",
+      "short_name": "Bar",
+      "description": "View drink orders for bartender staff",
+      "url": "/bartender"
+    }
+  ]
+} 
