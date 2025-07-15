@@ -60,7 +60,10 @@ import Footer from '../../components/Footer';
 import { initSocket, disconnectSocket } from '../../services/socket';
 
 // Add API URL constant
-const API_URL = 'http://localhost:5001/api';
+const isLocalhost = window.location.hostname === 'localhost';
+const BASE_URL = isLocalhost ? 'http://localhost:5001' : 'https://bsapi.diamond.et';
+
+const API_URL = `${BASE_URL}/api`;
 
 // Add fetchOrdersData helper function
 const fetchOrdersData = async (token) => {

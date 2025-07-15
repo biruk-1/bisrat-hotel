@@ -67,9 +67,12 @@ export default function Reports() {
   const [success, setSuccess] = useState('');
   const [socket, setSocket] = useState(null);
 
+  const isLocalhost = window.location.hostname === 'localhost';
+  const BASE_URL = isLocalhost ? 'http://localhost:5001' : 'https://bsapi.diamond.et';
+
   // Initialize socket connection
   useEffect(() => {
-    const newSocket = io('http://localhost:5001');
+    const newSocket = io(`${BASE_URL}`);
     setSocket(newSocket);
 
     // Clean up the socket connection when the component unmounts
@@ -179,7 +182,7 @@ export default function Reports() {
         detailLevel: 'daily' // Always use daily detail level for the most granular data
       });
       
-      const response = await axios.post('http://localhost:5001/api/reports/generate', {
+      const response = await axios.post(`${BASE_URL}/api/reports/generate`, {
         reportType,
         startDate: startDate.toISOString().split('T')[0],
         endDate: endDate.toISOString().split('T')[0],

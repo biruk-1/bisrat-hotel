@@ -112,6 +112,9 @@ export default function CashierDashboard() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalOrders, setTotalOrders] = useState(0);
 
+  const isLocalhost = window.location.hostname === 'localhost';
+  const BASE_URL = isLocalhost ? 'http://localhost:5001' : 'https://bsapi.diamond.et';
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -250,7 +253,7 @@ export default function CashierDashboard() {
       
       if (navigator.onLine) {
         try {
-        const response = await axios.get('http://localhost:5001/api/dashboard/cashier', {
+        const response = await axios.get(`${BASE_URL}/api/dashboard/cashier`, {
             headers: { Authorization: `Bearer ${token}` }
         });
           dashboardData = response.data;
@@ -292,7 +295,7 @@ export default function CashierDashboard() {
 
       if (navigator.onLine) {
         try {
-          const response = await axios.get('http://localhost:5001/api/orders', {
+          const response = await axios.get(`${BASE_URL}/api/orders`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           ordersData = response.data;
@@ -352,7 +355,7 @@ export default function CashierDashboard() {
   const fetchBillRequests = async () => {
     try {
       if (navigator.onLine) {
-        const response = await axios.get('http://localhost:5001/api/bill-requests', {
+        const response = await axios.get(`${BASE_URL}/api/bill-requests`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const formattedRequests = response.data.map(table => ({
@@ -380,7 +383,7 @@ export default function CashierDashboard() {
     fetchOrders();
     fetchBillRequests();
 
-    const socket = io('http://localhost:5001');
+    const socket = io(`${BASE_URL}`);
     socket.on('connect', () => console.log('Cashier connected to socket server'));
     
     socket.on('order_created', (newOrder) => {
@@ -512,7 +515,7 @@ export default function CashierDashboard() {
   const handleUpdateOrderStatus = async (order) => {
     try {
       setUpdatingOrderId(order.id);
-      const response = await axios.get(`http://localhost:5001/api/orders/${order.id}`, {
+      const response = await axios.get(`${BASE_URL}/api/orders/${order.id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const detailedOrder = response.data;
@@ -549,7 +552,7 @@ export default function CashierDashboard() {
         return;
       }
       const paymentToSend = newStatus === 'paid' ? parseFloat(paymentAmount) : (parseFloat(paymentAmount) || selectedOrder.total_amount || 0);
-      const response = await axios.put(`http://localhost:5001/api/orders/${selectedOrder.id}/status`, {
+      const response = await axios.put(`${BASE_URL}/api/orders/${selectedOrder.id}/status`, {
         status: newStatus,
         payment_amount: paymentToSend
       }, { headers: { Authorization: `Bearer ${token}` } });

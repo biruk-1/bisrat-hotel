@@ -142,6 +142,9 @@ export default function Receipt() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+
+  const isLocalhost = window.location.hostname === 'localhost';
+  const BASE_URL = isLocalhost ? 'http://localhost:5001' : 'https://bsapi.diamond.et';
   
   useEffect(() => {
     const fetchReceiptData = async () => {
@@ -201,7 +204,7 @@ export default function Receipt() {
         }
 
         // Fetch the order details
-        const orderResponse = await axios.get(`http://localhost:5001/api/orders/${orderId}`, {
+        const orderResponse = await axios.get(`${BASE_URL}/api/orders/${orderId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'

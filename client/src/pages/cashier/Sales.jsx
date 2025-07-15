@@ -62,6 +62,9 @@ export default function CashierSales() {
     severity: 'success'
   });
 
+  const isLocalhost = window.location.hostname === 'localhost';
+  const BASE_URL = isLocalhost ? 'http://localhost:5001' : 'https://bsapi.diamond.et';
+  
   // Fetch waiters on component mount
   useEffect(() => {
     if (token && user && user.role === 'cashier') {
@@ -84,14 +87,14 @@ export default function CashierSales() {
 
   // Socket.IO connection for real-time updates
   useEffect(() => {
-    const socket = io('http://localhost:5001', {
+    const socket = io(`${BASE_URL}`, {
       withCredentials: true,
       transports: ['websocket'],
       auth: {
         token
       },
       extraHeaders: {
-        'Access-Control-Allow-Origin': 'http://localhost:5173'
+        'Access-Control-Allow-Origin':`${BASE_URL}`
       }
     });
     
@@ -137,7 +140,7 @@ export default function CashierSales() {
 
   const fetchWaiters = async () => {
     try {
-      const response = await axios.get('http://localhost:5001/api/waiters', {
+      const response = await axios.get(`${BASE_URL}/api/waiters`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setWaiters(response.data);
@@ -177,7 +180,7 @@ export default function CashierSales() {
         userId: user?.id
       });
       
-      const response = await axios.get('http://localhost:5001/api/sales/daily', {
+      const response = await axios.get(`${BASE_URL}/api/sales/daily`, {
         headers: { 
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

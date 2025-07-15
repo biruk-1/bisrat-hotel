@@ -5,7 +5,12 @@
  * Any changes to the API URL only need to be made in this file.
  */
 
-export const API_BASE_URL = 'http://localhost:5001';
+
+
+const isLocalhost = window.location.hostname === 'localhost';
+export const API_BASE_URL = isLocalhost
+  ? 'http://localhost:5001'
+  : 'https://bsapi.diamond.et';
 
 export const API_ENDPOINTS = {
   // Auth
