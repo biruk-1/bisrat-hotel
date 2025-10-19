@@ -3099,6 +3099,18 @@ app.delete('/api/users/:id', authenticateToken, checkRole(['admin']), (req, res)
   });
 });
 
+// Debug endpoint to check environment variables
+app.get('/debug/env', (req, res) => {
+  res.json({
+    CORS_ORIGIN: process.env.CORS_ORIGIN,
+    NODE_ENV: process.env.NODE_ENV,
+    PORT: process.env.PORT,
+    JWT_SECRET: process.env.JWT_SECRET ? 'SET' : 'NOT SET',
+    allEnvKeys: Object.keys(process.env).filter(key => key.includes('CORS') || key.includes('NODE') || key.includes('PORT')),
+    allowedOrigins: allowedOrigins
+  });
+});
+
 // Start server
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
