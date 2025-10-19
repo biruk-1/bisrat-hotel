@@ -214,7 +214,7 @@ const WaiterMenu = () => {
   const fetchMenuItems = async () => {
     try {
       // No authentication needed for browsing menu
-      const response = await axios.get('http://localhost:5001/api/items')
+      const response = await axios.get('/api/items')
         .catch(networkErr => {
           throw new Error(`Network error: ${networkErr.message}. Is the server running?`);
         });
@@ -232,7 +232,7 @@ const WaiterMenu = () => {
   const fetchTables = async () => {
     try {
       // No authentication needed for browsing tables
-      const response = await axios.get('http://localhost:5001/api/tables')
+      const response = await axios.get('/api/tables')
         .catch(networkErr => {
           console.error(`Network error: ${networkErr.message}. Is the server running?`);
           return null;
@@ -240,9 +240,8 @@ const WaiterMenu = () => {
           
       if (!response) return;
       
-      // Filter only open tables
-      const openTables = response.data.filter(table => table.status === 'open');
-      setTables(openTables);
+      // Show all tables (waiters can take orders for occupied tables too)
+      setTables(response.data);
     } catch (err) {
       console.error('Error fetching tables:', err);
     }
@@ -267,7 +266,7 @@ const WaiterMenu = () => {
   // Get the correct image URL for items
   const getItemImageUrl = (item) => {
     if (item.image && item.image.startsWith('/uploads/')) {
-      return `http://localhost:5001${item.image}`;
+      return `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}${item.image}`;
     }
     return item.image || 'https://via.placeholder.com/300x140?text=Food+Item';
   };
@@ -844,7 +843,7 @@ const WaiterMenu = () => {
                   {tables.length > 0 ? (
                     tables.map((table) => (
                       <MenuItem key={table.id} value={table.table_number}>
-                        Table {table.table_number}
+                        Table {table.table_number} ({table.status})
                       </MenuItem>
                     ))
                   ) : (

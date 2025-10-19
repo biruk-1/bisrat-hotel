@@ -1,42 +1,44 @@
-/**
- * API Configuration
- * 
- * This file centralizes API configuration for the application.
- * Any changes to the API URL only need to be made in this file.
- */
-
-
-
-const isLocalhost = window.location.hostname === 'localhost';
-export const API_BASE_URL = isLocalhost
-  ? 'http://localhost:5001'
-  : 'https://bsapi.diamond.et';
-
-export const API_ENDPOINTS = {
-  // Auth
-  LOGIN: `${API_BASE_URL}/api/auth/login`,
-  PIN_LOGIN: `${API_BASE_URL}/api/auth/pin-login`,
+// API Configuration
+const getApiBaseUrl = () => {
+  // Check if we have an environment variable for the API URL
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
   
-  // Users
-  USERS: `${API_BASE_URL}/api/users`,
+  // Fallback to localhost for development
+  if (import.meta.env.DEV) {
+    return 'http://localhost:5001';
+  }
   
-  // Items
-  ITEMS: `${API_BASE_URL}/api/items`,
-  
-  // Orders
-  ORDERS: `${API_BASE_URL}/api/orders`,
-  ORDER_ITEMS: `${API_BASE_URL}/api/order-items`,
-  
-  // Terminals
-  KITCHEN_TERMINAL: `${API_BASE_URL}/api/terminal/kitchen`,
-  BARTENDER_TERMINAL: `${API_BASE_URL}/api/terminal/bartender`,
-  
-  // Reports
-  REPORTS_SALES: `${API_BASE_URL}/api/reports/sales`,
-  REPORTS_ITEMS: `${API_BASE_URL}/api/reports/items`,
-  
-  // Settings
-  SETTINGS: `${API_BASE_URL}/api/settings`,
+  // For production, you'll need to set this to your Render backend URL
+  // This is a placeholder - replace with your actual Render URL
+  return 'https://your-backend-app.onrender.com';
 };
 
-export default API_ENDPOINTS; 
+export const API_BASE_URL = getApiBaseUrl();
+
+export const API_ENDPOINTS = {
+  AUTH: {
+    LOGIN: '/api/auth/login',
+  },
+  ITEMS: '/api/items',
+  ORDERS: '/api/orders',
+  TABLES: '/api/tables',
+  USERS: '/api/users',
+  DASHBOARD: {
+    CASHIER: '/api/dashboard/cashier',
+    ADMIN: '/api/dashboard/admin',
+  },
+  HEALTH: '/api/health'
+};
+
+// Helper function to build full API URLs
+export const buildApiUrl = (endpoint) => {
+  return `${API_BASE_URL}${endpoint}`;
+};
+
+export default {
+  API_BASE_URL,
+  API_ENDPOINTS,
+  buildApiUrl
+};

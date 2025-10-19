@@ -70,6 +70,9 @@ export default function TableManagement() {
     message: '',
     severity: 'success'
   });
+
+  const isLocalhost = window.location.hostname === 'localhost';
+  const BASE_URL = isLocalhost ? 'http://localhost:5001' : 'https://bsapi.diamond.et';
   
   // Dialog form state
   const [dialogForm, setDialogForm] = useState({
@@ -87,7 +90,7 @@ export default function TableManagement() {
     const fetchTables = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5001/api/tables', {
+        const response = await axios.get(`${BASE_URL}/api/tables`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -128,7 +131,7 @@ export default function TableManagement() {
     // Fetch menu items for ordering
     const fetchMenuItems = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/items', {
+        const response = await axios.get(`${BASE_URL}/api/items`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -143,7 +146,7 @@ export default function TableManagement() {
     fetchMenuItems();
     
     // Socket.IO for real-time updates
-    const socket = io('http://localhost:5001');
+    const socket = io(`${BASE_URL}`);
     
     socket.on('connect', () => {
       console.log('Waiter connected to socket server');
@@ -283,7 +286,7 @@ export default function TableManagement() {
     // Navigate to an order entry form for this table with the table number pre-filled
     try {
       // First, check if we have actual items in the menu
-      const response = await axios.get('http://localhost:5001/api/items', {
+      const response = await axios.get(`${BASE_URL}/api/items`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -427,7 +430,7 @@ export default function TableManagement() {
         total_amount: selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
       };
       
-      const response = await axios.post('http://localhost:5001/api/orders', orderData, {
+      const response = await axios.post(`${BASE_URL}/api/orders`, orderData, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -470,7 +473,7 @@ export default function TableManagement() {
         throw new Error('Table not found');
       }
       
-      const response = await axios.put(`http://localhost:5001/api/tables/${table.table_number}/status`, {
+      const response = await axios.put(`${BASE_URL}/api/tables/${table.table_number}/status`, {
         status: 'bill_requested',
         occupants: table.occupants || 0
       }, {

@@ -20,8 +20,21 @@ const app = express();
 const server = http.createServer(app);
 
 // Updated CORS configuration
+const allowedOrigins = [
+  'http://localhost:5173', 
+  'http://localhost:5174',
+  'https://extensions.aitopia.ai', 
+  'https://bs.diamond.et',
+  'https://order.bisrathotel.com.et'
+];
+
+// Add production frontend URL if specified
+if (process.env.CORS_ORIGIN) {
+  allowedOrigins.push(process.env.CORS_ORIGIN);
+}
+
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://extensions.aitopia.ai', 'https://bs.diamond.et','https://order.bisrathotel.com.et'],
+  origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -48,7 +61,7 @@ const io = socketIO(server, {
 });
 
 const PORT = process.env.PORT || 5001;
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_only_for_development';
+const JWT_SECRET = process.env.JWT_SECRET ||  'eyJhbGciOiJIUzI1NiJ9.eyJpZGVudGlmaWVyIjoiN1RLREJXWkJkM2thblJtY2RXd0dqS2Q4VVhSdzhzR1MiLCJleHAiOjE4OTc5OTU5OTIsImlhdCI6MTc0MDIyOTU5MiwianRpIjoiMjk1MTgyZDQtNWI4Yi00NmQxLTkzM2MtZjhjZTM0ZWEwODRhIn0.Th9ynbZkgcf4c1_OU6UKDEE7jmKyfvl_BuzSvmVBQ8s';
 
 // Middleware
 app.use(express.json());
@@ -545,6 +558,16 @@ const checkRole = (roles) => {
 };
 
 // Routes
+// Health check endpoint for Render
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 // Authentication Routes
 app.post('/api/auth/login', (req, res) => {
   const { username, password, pin_code, phone_number } = req.body;
@@ -573,7 +596,7 @@ app.post('/api/auth/login', (req, res) => {
       const token = jwt.sign(
         { id: user.id, username: user.username, role: user.role },
         JWT_SECRET,
-        { expiresIn: '12h' }
+        { expiresIn: '7d' }
       );
 
       res.json({ token, user: { id: user.id, username: user.username, role: user.role } });
@@ -604,7 +627,7 @@ app.post('/api/auth/login', (req, res) => {
         const token = jwt.sign(
           { id: user.id, username: user.username, role: user.role },
           JWT_SECRET,
-          { expiresIn: '12h' }
+          { expiresIn: '7d' }
         );
 
         res.json({ token, user: { id: user.id, username: user.username, role: user.role } });
@@ -641,7 +664,7 @@ app.post('/api/auth/login', (req, res) => {
       const token = jwt.sign(
         { id: user.id, username: user.username, role: user.role },
         JWT_SECRET,
-        { expiresIn: '24h' }
+        { expiresIn: '7d' }
       );
 
       res.json({ token, user: { id: user.id, username: user.username, role: user.role } });
@@ -992,8 +1015,8 @@ app.get('/api/orders', authenticateToken, (req, res) => {
                   'price', oi.price,
                   'status', oi.status,
                   'item_type', oi.item_type,
-                  'name', i.name,
-                  'description', i.description
+                  'name', COALESCE(i.name, 'Unknown Item'),
+                  'description', COALESCE(i.description, '')
                 )
               END
             ), '[]'
@@ -1095,13 +1118,13 @@ app.get('/api/orders/:id/items', authenticateToken, (req, res) => {
           oi.price,
           oi.status,
           oi.item_type,
-          i.name,
-          i.description,
+          COALESCE(i.name, 'Unknown Item') as name,
+          COALESCE(i.description, '') as description,
           i.category,
           i.image,
           (oi.quantity * oi.price) as total_price
                FROM order_items oi
-               JOIN items i ON oi.item_id = i.id
+               LEFT JOIN items i ON oi.item_id = i.id
         WHERE oi.order_id = ?
         ORDER BY oi.id ASC`;
       break;
@@ -1115,13 +1138,13 @@ app.get('/api/orders/:id/items', authenticateToken, (req, res) => {
           oi.price,
           oi.status,
           oi.item_type,
-          i.name,
-          i.description,
+          COALESCE(i.name, 'Unknown Item') as name,
+          COALESCE(i.description, '') as description,
           i.category,
           i.image,
           (oi.quantity * oi.price) as total_price
                FROM order_items oi
-               JOIN items i ON oi.item_id = i.id
+               LEFT JOIN items i ON oi.item_id = i.id
         WHERE oi.order_id = ? AND oi.item_type = 'food'
         ORDER BY oi.id ASC`;
       break;
@@ -1135,13 +1158,13 @@ app.get('/api/orders/:id/items', authenticateToken, (req, res) => {
           oi.price,
           oi.status,
           oi.item_type,
-          i.name,
-          i.description,
+          COALESCE(i.name, 'Unknown Item') as name,
+          COALESCE(i.description, '') as description,
           i.category,
           i.image,
           (oi.quantity * oi.price) as total_price
                FROM order_items oi
-               JOIN items i ON oi.item_id = i.id
+               LEFT JOIN items i ON oi.item_id = i.id
         WHERE oi.order_id = ? AND oi.item_type = 'drink'
         ORDER BY oi.id ASC`;
       break;
@@ -1832,7 +1855,7 @@ app.put('/api/tables/:id/status', authenticateToken, checkRole(['waiter', 'cashi
          WHERE t.table_number = ?`,
         [tableId],
         (err, table) => {
-          if (!err && table) {
+          if (!err && table) {``
             console.log('Emitting table_status_updated event:', table);
             // Emit socket event for real-time updates
             io.emit('table_status_updated', table);
@@ -2563,7 +2586,7 @@ app.get('/api/orders/:id', authenticateToken, (req, res) => {
             'item_id', oi.item_id,
             'quantity', oi.quantity,
             'price', oi.price,
-            'name', i.name,
+            'name', COALESCE(i.name, 'Unknown Item'),
             'item_type', i.item_type,
             'status', oi.status
           )
@@ -2792,6 +2815,8 @@ app.put('/api/users/:id', authenticateToken, checkRole(['admin']), async (req, r
   const { id } = req.params;
   const { username, password, phone_number, pin_code, role } = req.body;
 
+  console.log(`Attempting to update user with ID: ${id}`, { username, phone_number, role, hasPassword: !!password });
+
   try {
     // First check if user exists
     db.get('SELECT * FROM users WHERE id = ?', [id], async (err, user) => {
@@ -2801,7 +2826,12 @@ app.put('/api/users/:id', authenticateToken, checkRole(['admin']), async (req, r
       }
       
       if (!user) {
-        return res.status(404).json({ error: 'User not found' });
+        console.error(`User with ID ${id} not found in database`);
+        return res.status(404).json({ 
+          error: 'User not found',
+          requestedId: id,
+          message: 'The user ID you are trying to update does not exist in the database'
+        });
       }
 
       let updateQuery = 'UPDATE users SET username = ?, phone_number = ?';
@@ -2839,6 +2869,211 @@ app.put('/api/users/:id', authenticateToken, checkRole(['admin']), async (req, r
     console.error('Error in user update:', error);
     res.status(500).json({ error: 'Server error' });
   }
+});
+
+// Get all users with IDs for debugging
+app.get('/api/users/debug', authenticateToken, checkRole(['admin']), (req, res) => {
+  db.all('SELECT id, username, role, phone_number, created_at FROM users ORDER BY id', [], (err, users) => {
+    if (err) {
+      console.error('Error fetching users for debug:', err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    console.log('Available users on server:', users);
+    res.json({
+      message: 'Available users on server',
+      users: users,
+      total: users.length
+    });
+  });
+});
+
+// Update user by username endpoint (alternative to ID-based update)
+app.put('/api/users/username/:username', authenticateToken, checkRole(['admin']), async (req, res) => {
+  const { username } = req.params;
+  const { password, phone_number, pin_code, role } = req.body;
+
+  console.log(`Attempting to update user with username: ${username}`, { phone_number, role, hasPassword: !!password });
+
+  try {
+    // First check if user exists
+    db.get('SELECT * FROM users WHERE username = ?', [username], async (err, user) => {
+      if (err) {
+        console.error('Error checking user:', err);
+        return res.status(500).json({ error: 'Database error' });
+      }
+      
+      if (!user) {
+        console.error(`User with username ${username} not found in database`);
+        return res.status(404).json({ 
+          error: 'User not found',
+          requestedUsername: username,
+          message: 'The username you are trying to update does not exist in the database'
+        });
+      }
+
+      let updateQuery = 'UPDATE users SET phone_number = ?';
+      let params = [phone_number];
+
+      // Only update password if provided
+      if (password) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        updateQuery += ', password = ?';
+        params.push(hashedPassword);
+      }
+
+      // Only update pin_code if provided and user is a waiter
+      if (pin_code && role === 'waiter') {
+        updateQuery += ', pin_code = ?';
+        params.push(pin_code);
+      }
+
+      updateQuery += ' WHERE username = ?';
+      params.push(username);
+
+      db.run(updateQuery, params, function(err) {
+        if (err) {
+          console.error('Error updating user:', err);
+          return res.status(500).json({ error: 'Failed to update user' });
+        }
+
+        res.json({ 
+          message: 'User updated successfully',
+          username: username,
+          userId: user.id
+        });
+      });
+    });
+  } catch (error) {
+    console.error('Error in user update:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Database diagnostic endpoint to understand the data problem
+app.get('/api/admin/diagnose/items-problem', authenticateToken, checkRole(['admin']), (req, res) => {
+  console.log('Diagnosing items problem...');
+  
+  // Get all items in the database
+  db.all('SELECT id, name, price, item_type FROM items ORDER BY id', [], (err, items) => {
+    if (err) {
+      console.error('Error fetching items:', err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    
+    // Get order items with their item references
+    db.all(`
+      SELECT 
+        oi.id as order_item_id,
+        oi.order_id,
+        oi.item_id,
+        oi.quantity,
+        oi.price as order_item_price,
+        oi.item_type,
+        oi.status,
+        i.name as item_name,
+        i.price as item_price,
+        o.created_at as order_date
+      FROM order_items oi
+      LEFT JOIN items i ON oi.item_id = i.id
+      LEFT JOIN orders o ON oi.order_id = o.id
+      ORDER BY o.created_at DESC
+      LIMIT 20
+    `, [], (err, orderItems) => {
+      if (err) {
+        console.error('Error fetching order items:', err);
+        return res.status(500).json({ error: 'Database error' });
+      }
+      
+      // Count orphaned items
+      const orphanedCount = orderItems.filter(oi => oi.item_id === null || oi.item_name === null).length;
+      
+      res.json({
+        message: 'Database diagnosis complete',
+        summary: {
+          totalItems: items.length,
+          totalOrderItems: orderItems.length,
+          orphanedOrderItems: orphanedCount,
+          itemsWithNames: orderItems.filter(oi => oi.item_name !== null).length
+        },
+        items: items,
+        orderItems: orderItems,
+        orphanedItems: orderItems.filter(oi => oi.item_id === null || oi.item_name === null)
+      });
+    });
+  });
+});
+
+
+
+
+// Delete user endpoint
+app.delete('/api/users/:id', authenticateToken, checkRole(['admin']), (req, res) => {
+  const { id } = req.params;
+  
+  console.log(`Attempting to delete user with ID: ${id}`);
+
+  // First check if user exists
+  db.get('SELECT * FROM users WHERE id = ?', [id], (err, user) => {
+    if (err) {
+      console.error('Error checking user:', err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    
+    if (!user) {
+      console.error(`User with ID ${id} not found in database`);
+      return res.status(404).json({ 
+        error: 'User not found',
+        requestedId: id,
+        message: 'The user ID you are trying to delete does not exist in the database'
+      });
+    }
+
+    // Prevent deleting the last admin user
+    if (user.role === 'admin') {
+      db.get('SELECT COUNT(*) as adminCount FROM users WHERE role = "admin"', [], (err, result) => {
+        if (err) {
+          console.error('Error counting admin users:', err);
+          return res.status(500).json({ error: 'Database error' });
+        }
+        
+        if (result.adminCount <= 1) {
+          return res.status(400).json({ 
+            error: 'Cannot delete user',
+            message: 'Cannot delete the last admin user. At least one admin must remain in the system.'
+          });
+        }
+        
+        // Proceed with deletion
+        deleteUser();
+      });
+    } else {
+      // Proceed with deletion for non-admin users
+      deleteUser();
+    }
+
+    function deleteUser() {
+      db.run('DELETE FROM users WHERE id = ?', [id], function(err) {
+        if (err) {
+          console.error('Error deleting user:', err);
+          return res.status(500).json({ error: 'Failed to delete user' });
+        }
+
+        if (this.changes === 0) {
+          return res.status(404).json({ error: 'User not found' });
+        }
+
+        console.log(`Successfully deleted user: ${user.username} (ID: ${id})`);
+        res.json({ 
+          message: 'User deleted successfully',
+          deletedUser: {
+            id: parseInt(id),
+            username: user.username,
+            role: user.role
+          }
+        });
+      });
+    }
+  });
 });
 
 // Start server

@@ -45,7 +45,7 @@ export default function Settings() {
 
   // Form state
   const [settings, setSettings] = useState({
-    restaurantName: 'My Restaurant',
+    restaurantName: 'Bisrat Hotel',
     taxRate: 15,
     serviceCharge: 10,
     currency: 'ETB',

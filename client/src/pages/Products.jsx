@@ -32,6 +32,10 @@ function Products() {
     category: '',
   });
 
+
+const isLocalhost = window.location.hostname === 'localhost';
+const BASE_URL = isLocalhost ? 'http://localhost:5000' : 'https://bsapi.diamond.et';
+
   useEffect(() => {
     fetchProducts();
   }, []);

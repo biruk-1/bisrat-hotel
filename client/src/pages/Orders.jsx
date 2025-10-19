@@ -30,6 +30,8 @@ function Orders() {
     product_id: '',
     quantity: 1,
   });
+  const isLocalhost = window.location.hostname === 'localhost';
+  const BASE_URL = isLocalhost ? 'http://localhost:5000' : 'https://bsapi.diamond.et';
 
   useEffect(() => {
     fetchOrders();
@@ -39,7 +41,7 @@ function Orders() {
   const fetchOrders = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/orders', {
+      const response = await axios.get(`${BASE_URL}/api/orders`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOrders(response.data);
@@ -51,7 +53,7 @@ function Orders() {
   const fetchProducts = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/products', {
+      const response = await axios.get(`${BASE_URL}/api/products`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProducts(response.data);
@@ -111,12 +113,13 @@ function Orders() {
       );
 
       await axios.post(
-        'http://localhost:5000/api/orders',
+        `${BASE_URL}/api/orders`,
         {
           items: selectedProducts.map(({ product_id, quantity, price }) => ({
-            product_id,
+            item_id: product_id,
             quantity,
             price,
+            item_type: 'food'
           })),
           total_amount,
         },

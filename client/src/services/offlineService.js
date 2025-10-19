@@ -520,10 +520,11 @@ export const saveOrderOffline = async (orderData) => {
     const orderToSave = {
       id: orderData.id || `offline_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       items: validItems.map(item => ({
-        id: item.id || null,
+        item_id: item.item_id || item.id || null,
         name: item.name || 'Unknown Item',
         price: item && typeof item.price !== 'undefined' ? parseFloat(item.price) || 0 : 0,
         quantity: item && typeof item.quantity !== 'undefined' ? parseInt(item.quantity) || 1 : 1,
+        item_type: item.item_type || 'food',
         category: item.category || 'uncategorized'
       })),
       total_amount: parseFloat(orderData.total || orderData.total_amount || 0),

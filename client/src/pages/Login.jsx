@@ -253,7 +253,7 @@ const Login = () => {
           }}
         >
           <Typography variant="h5" fontWeight={700} color="#222" letterSpacing={1} sx={{ mb: 2 }}>
-            Restaurant POS System
+            Bisrat Hotel
           </Typography>
           <Tabs
             value={activeTab}

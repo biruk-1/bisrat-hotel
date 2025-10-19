@@ -235,7 +235,7 @@ export default function Receipt() {
           status: orderData.status || 'pending',
           items: items.map(item => ({
             id: item.id,
-            name: item.name || 'Unkown item', // Remove the fallback since we handle it in the Dashboard
+            name: item.name || 'Unknown Item', // Fallback for missing item names
             quantity: Number(item.quantity) || 0,
             price: Number(item.price) || 0,
             item_type: item.item_type || 'food',
@@ -290,9 +290,9 @@ export default function Receipt() {
       return `
         <div class="receipt">
           <div class="header">
-            <h1>MY RESTAURANT</h1>
-            <p>123 Restaurant St, Foodville, FC 12345</p>
-            <p>Tel: (123) 456-7890</p>
+            <h1>Bisrat Hotel</h1>
+            <p>Adama</p>
+            <p>Tel: +(251) 906320251 | Email: info@bisrathotel.com</p>
           </div>
           
           <div class="divider"></div>
@@ -330,7 +330,7 @@ export default function Receipt() {
                 <div class="item-details">
                   <div class="item-name">${item.name}</div>
                   <div class="item-qty">${item.quantity}</div>
-                  <div class="item-price">$${item.price.toFixed(2)}</div>
+                  <div class="item-price">${item.price.toFixed(2)} ETB</div>
                 </div>
               </div>
             `).join('')}
@@ -340,27 +340,25 @@ export default function Receipt() {
           
           <div class="subtotal">
             <div>Subtotal:</div>
-            <div>$${subtotal.toFixed(2)}</div>
+            <div>${subtotal.toFixed(2)} ETB</div>
           </div>
           <div class="subtotal">
             <div>Tax (15%):</div>
-            <div>$${tax.toFixed(2)}</div>
+            <div>${tax.toFixed(2)} ETB</div>
           </div>
           <div class="subtotal">
             <div>Service (10%):</div>
-            <div>$${serviceCharge.toFixed(2)}</div>
+            <div>${serviceCharge.toFixed(2)} ETB</div>
           </div>
           
           <div class="divider"></div>
           
           <div class="total">
             <div>TOTAL:</div>
-            <div>$${total.toFixed(2)}</div>
+            <div>${total.toFixed(2)} ETB</div>
           </div>
           
-          <div class="payment-status">
-            ${receipt.status.toUpperCase()}
-          </div>
+          
           <div style="text-align: center; font-size: 9px; margin: 2mm 0;">
             Payment Method: ${receipt.paymentMethod}
           </div>
@@ -577,13 +575,13 @@ export default function Receipt() {
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
               <ReceiptIcon color="primary" sx={{ fontSize: 40, mb: 1 }} />
               <Typography variant="h4" gutterBottom align="center">
-                My Restaurant
+                Bisrat Hotel
               </Typography>
               <Typography variant="body2" align="center" color="text.secondary">
-                123 Restaurant St, Foodville, FC 12345
+                Adama
               </Typography>
               <Typography variant="body2" align="center" color="text.secondary">
-                Tel: (123) 456-7890 | Email: info@myrestaurant.com
+                Tel: +(251) 906320251 | Email: info@bisrathotel.com
               </Typography>
             </Box>
             

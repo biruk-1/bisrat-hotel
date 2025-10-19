@@ -262,11 +262,11 @@ export default function OrderEntry() {
     const orderData = {
       id: Date.now().toString(),
       items: cart.map(item => ({
-        id: item.id,
+        item_id: item.id,
         name: item.name,
         quantity: item.quantity,
         price: item.price,
-        type: item.item_type
+        item_type: item.item_type
       })),
       total: calculateTotal(),
       waiter_id: waiterId,
@@ -511,16 +511,16 @@ export default function OrderEntry() {
       // Save order data for offline/online sync
     const orderData = {
       items: cart.map(item => ({
-        id: item.id,
+        item_id: item.id,
         name: item.name,
         quantity: item.quantity,
         price: item.price,
-          item_type: item.item_type
+        item_type: item.item_type
       })),
       total: calculateTotal(),
       waiter_id: waiterId,
       status: 'pending',
-        created_at: new Date().toISOString()
+      created_at: new Date().toISOString()
     };
 
       if (offlineMode) {

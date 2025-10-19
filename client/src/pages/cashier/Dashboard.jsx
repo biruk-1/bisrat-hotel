@@ -104,7 +104,7 @@ export default function CashierDashboard() {
 
   const today = new Date();
   const todayFormatted = today.toISOString().split('T')[0];
-  const [dateFilter, setDateFilter] = useState(todayFormatted);
+  const [dateFilter, setDateFilter] = useState('today');
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [customDate, setCustomDate] = useState('');
   const [availableDates, setAvailableDates] = useState([]);
@@ -333,11 +333,18 @@ export default function CashierDashboard() {
       // Apply date filtering
       if (dateFilter === 'all') {
         setFilteredOrders(ordersData);
+      } else if (dateFilter === 'today') {
+        const today = new Date().toISOString().split('T')[0];
+        const filtered = ordersData.filter(order => {
+          const orderDate = new Date(order.created_at).toISOString().split('T')[0];
+          return orderDate === today;
+        });
+        setFilteredOrders(filtered);
       } else {
         const filtered = ordersData.filter(order => {
           const orderDate = new Date(order.created_at).toISOString().split('T')[0];
           return orderDate === dateFilter;
-      });
+        });
         setFilteredOrders(filtered);
       }
     } catch (error) {
@@ -436,21 +443,28 @@ export default function CashierDashboard() {
 
   useEffect(() => {
     if (orders.length > 0) {
-      console.log(`Applying date filter: ${dateFilter} to ${orders.length} orders`);
       let filtered;
       
       if (dateFilter === 'all') {
         filtered = orders;
+      } else if (dateFilter === 'today') {
+        const today = new Date().toISOString().split('T')[0];
+        filtered = orders.filter(order => {
+          if (!order.created_at) return false;
+          try {
+            const orderDate = new Date(order.created_at).toISOString().split('T')[0];
+            return orderDate === today;
+          } catch (e) {
+            console.error(`Error comparing dates for order ${order.id}:`, e);
+            return false;
+          }
+        });
       } else {
         filtered = orders.filter(order => {
           if (!order.created_at) return false;
           try {
-            if (dateFilter === 'today' || dateFilter === new Date().toISOString().split('T')[0]) {
-              return isSameDay(order.created_at, new Date());
-            } else {
-              const orderDate = new Date(order.created_at).toISOString().split('T')[0];
-              return orderDate === dateFilter;
-            }
+            const orderDate = new Date(order.created_at).toISOString().split('T')[0];
+            return orderDate === dateFilter;
           } catch (e) {
             console.error(`Error comparing dates for order ${order.id}:`, e);
             return false;
