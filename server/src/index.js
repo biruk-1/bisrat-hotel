@@ -54,10 +54,22 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// Updated Socket.IO configuration
+// Updated Socket.IO configuration with dynamic CORS origins
+const socketCorsOrigins = [
+  'http://localhost:5173', 
+  'http://localhost:5174', 
+  'https://bs.diamond.et',
+  'https://order.bisrathotel.com.et'
+];
+
+// Add production frontend URL if specified
+if (process.env.CORS_ORIGIN) {
+  socketCorsOrigins.push(process.env.CORS_ORIGIN);
+}
+
 const io = socketIO(server, {
   cors: {
-    origin: ['http://localhost:5173', 'http://localhost:5174', 'https://bs.diamond.et','https://order.bisrathotel.com.et'],
+    origin: socketCorsOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
