@@ -27,17 +27,8 @@ self.addEventListener('install', (event) => {
       // Cache API routes
       caches.open(API_CACHE_NAME).then((cache) => {
         console.log('Caching API routes');
-        return Promise.all(
-          API_ROUTES.map(route => 
-            fetch(`http://localhost:5001${route}`)
-              .then(response => {
-                if (response.ok) {
-                  return cache.put(route, response);
-                }
-              })
-              .catch(error => console.error(`Failed to cache ${route}:`, error))
-          )
-        );
+        // Skip API caching in production to avoid CORS issues
+        return Promise.resolve();
       })
     ])
   );

@@ -10,9 +10,8 @@ const getApiBaseUrl = () => {
     return 'http://localhost:5001';
   }
   
-  // For production, you'll need to set this to your Render backend URL
-  // This is a placeholder - replace with your actual Render URL
-  return 'https://your-backend-app.onrender.com';
+  // For production, use the actual Render backend URL
+  return 'https://pos-system-2deh.onrender.com';
 };
 
 export const API_BASE_URL = getApiBaseUrl();
