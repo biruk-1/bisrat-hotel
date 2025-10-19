@@ -26,6 +26,7 @@ const allowedOrigins = [
   'https://extensions.aitopia.ai', 
   'https://bs.diamond.et',
   'https://order.bisrathotel.com.et',
+  'https://bisrat-hotel.vercel.app', // Add Vercel frontend directly
   'null' // Allow local file testing
 ];
 
@@ -59,7 +60,8 @@ const socketCorsOrigins = [
   'http://localhost:5173', 
   'http://localhost:5174', 
   'https://bs.diamond.et',
-  'https://order.bisrathotel.com.et'
+  'https://order.bisrathotel.com.et',
+  'https://bisrat-hotel.vercel.app' // Add Vercel frontend directly
 ];
 
 // Add production frontend URL if specified
