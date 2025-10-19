@@ -3102,4 +3102,6 @@ app.delete('/api/users/:id', authenticateToken, checkRole(['admin']), (req, res)
 // Start server
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`CORS Origin: ${process.env.CORS_ORIGIN || 'not set'}`);
 }); 
