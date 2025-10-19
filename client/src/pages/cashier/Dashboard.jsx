@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../../config/api.js';
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -113,7 +114,7 @@ export default function CashierDashboard() {
   const [totalOrders, setTotalOrders] = useState(0);
 
   const isLocalhost = window.location.hostname === 'localhost';
-  const BASE_URL = isLocalhost ? 'http://localhost:5001' : 'https://bsapi.diamond.et';
+  const BASE_URL = API_BASE_URL;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

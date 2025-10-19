@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../../config/api.js';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -144,7 +145,7 @@ export default function Receipt() {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   const isLocalhost = window.location.hostname === 'localhost';
-  const BASE_URL = isLocalhost ? 'http://localhost:5001' : 'https://bsapi.diamond.et';
+  const BASE_URL = API_BASE_URL;
   
   useEffect(() => {
     const fetchReceiptData = async () => {

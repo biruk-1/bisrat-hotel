@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../../config/api.js';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
@@ -61,7 +62,7 @@ import { initSocket, disconnectSocket } from '../../services/socket';
 
 // Add API URL constant
 const isLocalhost = window.location.hostname === 'localhost';
-const BASE_URL = isLocalhost ? 'http://localhost:5001' : 'https://bsapi.diamond.et';
+const BASE_URL = API_BASE_URL;
 
 const API_URL = `${BASE_URL}/api`;
 
@@ -69,7 +70,7 @@ const API_URL = `${BASE_URL}/api`;
 const fetchOrdersData = async (token) => {
   try {
     console.log('Fetching all orders...');
-    const response = await axios.get('http://localhost:5001/api/orders', {
+    const response = await axios.get('/api/orders', {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -129,7 +130,7 @@ const fetchOrdersData = async (token) => {
 // Add fetchWaitersData helper function
 const fetchWaitersData = async (token) => {
   try {
-    const response = await axios.get('http://localhost:5001/api/waiters', {
+    const response = await axios.get('/api/waiters', {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -147,7 +148,7 @@ const fetchOrderWithItems = async (orderId, token) => {
   try {
     console.log('Fetching order details for order:', orderId);
     // First get the order details with items included
-    const response = await axios.get(`http://localhost:5001/api/orders/${orderId}`, {
+    const response = await axios.get(`/api/orders/${orderId}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -164,7 +165,7 @@ const fetchOrderWithItems = async (orderId, token) => {
       try {
         console.log('Fetching items separately for order:', orderId);
         // First get the order items
-        const itemsRes = await axios.get(`http://localhost:5001/api/orders/${orderId}/items`, {
+        const itemsRes = await axios.get(`/api/orders/${orderId}/items`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -173,7 +174,7 @@ const fetchOrderWithItems = async (orderId, token) => {
         console.log('Items response:', itemsRes.data);
 
         // Then get the menu items to ensure we have complete item details
-        const menuRes = await axios.get('http://localhost:5001/api/menu-items', {
+        const menuRes = await axios.get('/api/menu-items', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -476,7 +477,7 @@ export default function AdminDashboard() {
         customDate: customDate ? customDate.toISOString().split('T')[0] : null
       });
 
-      let url = `http://localhost:5001/api/admin/sales/${timeRangeParam}`;
+      let url = `/api/admin/sales/${timeRangeParam}`;
       const params = new URLSearchParams();
 
       if (waiterId && waiterId !== 'all') {
@@ -767,7 +768,7 @@ export default function AdminDashboard() {
       
       // Make the API request to update the order
       const response = await axios.put(
-        `http://localhost:5001/api/orders/${editedOrder.id}`, 
+        `/api/orders/${editedOrder.id}`, 
         updateData,
         {
           headers: {
@@ -820,7 +821,7 @@ export default function AdminDashboard() {
       setLoading(true);
       
       // Make the API request to delete the order
-      await axios.delete(`http://localhost:5001/api/orders/${orderId}`, {
+      await axios.delete(`/api/orders/${orderId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -878,7 +879,7 @@ export default function AdminDashboard() {
     
     // Fetch data with the new date
     try {
-      const url = `http://localhost:5001/api/admin/sales/custom?date=${formattedDate}&_t=${Date.now()}`;
+      const url = `/api/admin/sales/custom?date=${formattedDate}&_t=${Date.now()}`;
       const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

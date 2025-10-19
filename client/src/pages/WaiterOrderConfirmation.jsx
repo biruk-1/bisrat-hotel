@@ -47,7 +47,7 @@ const WaiterOrderConfirmation = () => {
 
     try {
       // Submit the order with authentication
-      const response = await axios.post('http://localhost:5001/api/orders', 
+      const response = await axios.post('/api/orders', 
         {
           tableNumber: orderData.tableNumber,
           items: orderData.items,
@@ -64,7 +64,7 @@ const WaiterOrderConfirmation = () => {
       setSuccess(true);
       
       // Also update table status to 'occupied'
-      await axios.put(`http://localhost:5001/api/tables/${tableNumber}/status`, 
+      await axios.put(`/api/tables/${tableNumber}/status`, 
         {
           status: 'occupied',
           occupants: orderData.items.reduce((sum, item) => sum + item.quantity, 0)

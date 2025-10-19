@@ -5,7 +5,9 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "build": "npm ci && npm rebuild sqlite3",
+    "postinstall": "npm rebuild sqlite3"
   },
   "keywords": [],
   "author": "",

@@ -38,7 +38,7 @@ import io from 'socket.io-client';
 // Function to get the correct image URL
 const getItemImageUrl = (image) => {
   if (image && image.startsWith('/uploads/')) {
-    return `http://localhost:5001${image}`;
+    return `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}${image}`;
   }
   return image || 'https://via.placeholder.com/60x60?text=Drink';
 };
@@ -119,7 +119,7 @@ export default function BartenderView() {
   // Socket.IO connection for real-time updates
   useEffect(() => {
     console.log('Setting up Socket.IO connection for Bartender View');
-    const socket = io('http://localhost:5001');
+    const socket = io(import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001');
     
     socket.on('connect', () => {
       console.log('Bartender connected to socket server with ID:', socket.id);

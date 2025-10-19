@@ -1,6 +1,7 @@
 import io from 'socket.io-client';
 
-const SOCKET_URL = 'http://localhost:5001';
+import { API_BASE_URL } from '../config/api.js';
+const SOCKET_URL = API_BASE_URL;
 
 // Create socket instance
 export const socket = io(SOCKET_URL, {

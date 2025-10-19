@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Backend API Tester</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .test-section h3 { margin-top: 0; color: #333; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+        input, select { padding: 8px; margin: 5px; border: 1px solid #ddd; border-radius: 4px; }
+        .auth-section { background: #fff3cd; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 POS Backend API Tester</h1>
+        <p><strong>Backend URL:</strong> <span id="backendUrl">https://pos-system-2deh.onrender.com</span></p>
+        
+        <!-- Authentication Section -->
+        <div class="auth-section">
+            <h3>🔐 Authentication</h3>
+            <p>First, login to get an authentication token:</p>
+            <div>
+                <input type="text" id="username" placeholder="Username (admin)" value="admin">
+                <input type="password" id="password" placeholder="Password (admin123)" value="admin123">
+                <button onclick="testLogin()">Login</button>
+            </div>
+            <div id="authResult" class="result"></div>
+            <p><strong>Token:</strong> <span id="tokenDisplay">Not logged in</span></p>
+        </div>
+
+        <!-- API Tests -->
+        <div class="test-section">
+            <h3>🏥 Health Check</h3>
+            <button onclick="testHealth()">Test Health Endpoint</button>
+            <div id="healthResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🍽️ Items/Menu API</h3>
+            <button onclick="testGetItems()">Get All Items</button>
+            <button onclick="testCreateItem()">Create Test Item</button>
+            <div id="itemsResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🪑 Tables API</h3>
+            <button onclick="testGetTables()">Get All Tables</button>
+            <button onclick="testUpdateTableStatus()">Update Table Status</button>
+            <div id="tablesResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📋 Orders API</h3>
+            <button onclick="testGetOrders()">Get All Orders</button>
+            <button onclick="testCreateOrder()">Create Test Order</button>
+            <div id="ordersResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>👥 Users API</h3>
+            <button onclick="testGetUsers()">Get All Users</button>
+            <div id="usersResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 Dashboard API</h3>
+            <button onclick="testCashierDashboard()">Test Cashier Dashboard</button>
+            <button onclick="testAdminDashboard()">Test Admin Dashboard</button>
+            <div id="dashboardResult" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'https://pos-system-2deh.onrender.com';
+        let authToken = null;
+
+        function displayResult(elementId, result, isError = false) {
+            const element = document.getElementById(elementId);
+            element.textContent = JSON.stringify(result, null, 2);
+            element.className = `result ${isError ? 'error' : 'success'}`;
+        }
+
+        function displayInfo(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = 'result info';
+        }
+
+        async function makeRequest(endpoint, options = {}) {
+            try {
+                const url = `${BACKEND_URL}${endpoint}`;
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(authToken && { 'Authorization': `Bearer ${authToken}` })
+                    },
+                    ...options
+                };
+
+                console.log(`Making request to: ${url}`, config);
+                const response = await fetch(url, config);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${data.error || data.message || 'Unknown error'}`);
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('Request failed:', error);
+                throw error;
+            }
+        }
+
+        async function testLogin() {
+            try {
+                displayInfo('authResult', 'Logging in...');
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                const result = await makeRequest('/api/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ username, password })
+                });
+                
+                authToken = result.token;
+                document.getElementById('tokenDisplay').textContent = authToken ? 'Logged in ✅' : 'No token received';
+                displayResult('authResult', result);
+            } catch (error) {
+                displayResult('authResult', { error: error.message }, true);
+            }
+        }
+
+        async function testHealth() {
+            try {
+                displayInfo('healthResult', 'Testing health endpoint...');
+                const result = await makeRequest('/api/health');
+                displayResult('healthResult', result);
+            } catch (error) {
+                displayResult('healthResult', { error: error.message }, true);
+            }
+        }
+
+        async function testGetItems() {
+            try {
+                displayInfo('itemsResult', 'Fetching items...');
+                const result = await makeRequest('/api/items');
+                displayResult('itemsResult', { count: result.length, items: result.slice(0, 3) });
+            } catch (error) {
+                displayResult('itemsResult', { error: error.message }, true);
+            }
+        }
+
+        async function testCreateItem() {
+            if (!authToken) {
+                displayResult('itemsResult', { error: 'Please login first' }, true);
+                return;
+            }
+            
+            try {
+                displayInfo('itemsResult', 'Creating test item...');
+                const testItem = {
+                    name: 'Test Item',
+                    price: 9.99,
+                    category: 'Test',
+                    description: 'API Test Item'
+                };
+                
+                const result = await makeRequest('/api/items', {
+                    method: 'POST',
+                    body: JSON.stringify(testItem)
+                });
+                displayResult('itemsResult', result);
+            } catch (error) {
+                displayResult('itemsResult', { error: error.message }, true);
+            }
+        }
+
+        async function testGetTables() {
+            try {
+                displayInfo('tablesResult', 'Fetching tables...');
+                const result = await makeRequest('/api/tables');
+                displayResult('tablesResult', { count: result.length, tables: result.slice(0, 5) });
+            } catch (error) {
+                displayResult('tablesResult', { error: error.message }, true);
+            }
+        }
+
+        async function testUpdateTableStatus() {
+            if (!authToken) {
+                displayResult('tablesResult', { error: 'Please login first' }, true);
+                return;
+            }
+            
+            try {
+                displayInfo('tablesResult', 'Updating table status...');
+                const result = await makeRequest('/api/tables/1/status', {
+                    method: 'PUT',
+                    body: JSON.stringify({ status: 'open', occupants: 0 })
+                });
+                displayResult('tablesResult', result);
+            } catch (error) {
+                displayResult('tablesResult', { error: error.message }, true);
+            }
+        }
+
+        async function testGetOrders() {
+            if (!authToken) {
+                displayResult('ordersResult', { error: 'Please login first' }, true);
+                return;
+            }
+            
+            try {
+                displayInfo('ordersResult', 'Fetching orders...');
+                const result = await makeRequest('/api/orders');
+                displayResult('ordersResult', { count: result.length, orders: result.slice(0, 3) });
+            } catch (error) {
+                displayResult('ordersResult', { error: error.message }, true);
+            }
+        }
+
+        async function testCreateOrder() {
+            if (!authToken) {
+                displayResult('ordersResult', { error: 'Please login first' }, true);
+                return;
+            }
+            
+            try {
+                displayInfo('ordersResult', 'Creating test order...');
+                const testOrder = {
+                    table_number: 1,
+                    items: [{ id: 1, quantity: 2, price: 10.00 }],
+                    total: 20.00
+                };
+                
+                const result = await makeRequest('/api/orders', {
+                    method: 'POST',
+                    body: JSON.stringify(testOrder)
+                });
+                displayResult('ordersResult', result);
+            } catch (error) {
+                displayResult('ordersResult', { error: error.message }, true);
+            }
+        }
+
+        async function testGetUsers() {
+            if (!authToken) {
+                displayResult('usersResult', { error: 'Please login first' }, true);
+                return;
+            }
+            
+            try {
+                displayInfo('usersResult', 'Fetching users...');
+                const result = await makeRequest('/api/users');
+                displayResult('usersResult', { count: result.length, users: result.slice(0, 3) });
+            } catch (error) {
+                displayResult('usersResult', { error: error.message }, true);
+            }
+        }
+
+        async function testCashierDashboard() {
+            if (!authToken) {
+                displayResult('dashboardResult', { error: 'Please login first' }, true);
+                return;
+            }
+            
+            try {
+                displayInfo('dashboardResult', 'Testing cashier dashboard...');
+                const result = await makeRequest('/api/dashboard/cashier');
+                displayResult('dashboardResult', result);
+            } catch (error) {
+                displayResult('dashboardResult', { error: error.message }, true);
+            }
+        }
+
+        async function testAdminDashboard() {
+            if (!authToken) {
+                displayResult('dashboardResult', { error: 'Please login first' }, true);
+                return;
+            }
+            
+            try {
+                displayInfo('dashboardResult', 'Testing admin dashboard...');
+                const result = await makeRequest('/api/dashboard/admin');
+                displayResult('dashboardResult', result);
+            } catch (error) {
+                displayResult('dashboardResult', { error: error.message }, true);
+            }
+        }
+
+        // Test health endpoint on page load
+        window.onload = function() {
+            testHealth();
+        };
+    </script>
+</body>
+</html>

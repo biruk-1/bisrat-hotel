@@ -39,7 +39,8 @@ import {
   isOnline 
 } from '../services/offlineService';
 
-const API_URL = 'http://localhost:5001/api';
+import { API_BASE_URL } from '../config/api.js';
+const API_URL = `${API_BASE_URL}/api`;
 
 function Dashboard() {
   const [stats, setStats] = useState({

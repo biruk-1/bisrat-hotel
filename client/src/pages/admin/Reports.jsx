@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../../config/api.js';
 import { useState, useEffect } from 'react';
 import {
   Box,
@@ -68,7 +69,7 @@ export default function Reports() {
   const [socket, setSocket] = useState(null);
 
   const isLocalhost = window.location.hostname === 'localhost';
-  const BASE_URL = isLocalhost ? 'http://localhost:5001' : 'https://bsapi.diamond.et';
+  const BASE_URL = API_BASE_URL;
 
   // Initialize socket connection
   useEffect(() => {

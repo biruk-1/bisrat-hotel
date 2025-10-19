@@ -25,7 +25,8 @@ const allowedOrigins = [
   'http://localhost:5174',
   'https://extensions.aitopia.ai', 
   'https://bs.diamond.et',
-  'https://order.bisrathotel.com.et'
+  'https://order.bisrathotel.com.et',
+  'null' // Allow local file testing
 ];
 
 // Add production frontend URL if specified
@@ -34,7 +35,17 @@ if (process.env.CORS_ORIGIN) {
 }
 
 const corsOptions = {
-  origin: allowedOrigins,
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,

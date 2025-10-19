@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../../config/api.js';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
@@ -63,7 +64,7 @@ export default function CashierSales() {
   });
 
   const isLocalhost = window.location.hostname === 'localhost';
-  const BASE_URL = isLocalhost ? 'http://localhost:5001' : 'https://bsapi.diamond.et';
+  const BASE_URL = API_BASE_URL;
   
   // Fetch waiters on component mount
   useEffect(() => {

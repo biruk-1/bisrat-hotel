@@ -142,7 +142,7 @@ export default function MenuItems() {
 
   // Socket.IO connection
   useEffect(() => {
-    const socket = io('http://localhost:5001');
+    const socket = io(import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001');
     
     socket.on('connect', () => {
       console.log('Connected to socket server');
@@ -188,7 +188,7 @@ export default function MenuItems() {
     const fetchItems = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5001/api/items', {
+        const response = await axios.get('/api/items', {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         console.log('Fetched items:', response.data);
@@ -378,7 +378,7 @@ export default function MenuItems() {
       
       if (selectedItem) {
         // Update existing item
-        const response = await axios.put(`http://localhost:5001/api/items/${selectedItem.id}`, formDataWithImage, {
+        const response = await axios.put(`/api/items/${selectedItem.id}`, formDataWithImage, {
           headers: { 
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'multipart/form-data'
@@ -391,7 +391,7 @@ export default function MenuItems() {
         setSuccess('Item updated successfully!');
       } else {
         // Create new item
-        const response = await axios.post('http://localhost:5001/api/items', formDataWithImage, {
+        const response = await axios.post('/api/items', formDataWithImage, {
           headers: { 
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'multipart/form-data'
@@ -416,7 +416,7 @@ export default function MenuItems() {
     
     try {
       // Delete the item through the API
-      await axios.delete(`http://localhost:5001/api/items/${itemId}`, {
+      await axios.delete(`/api/items/${itemId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       
@@ -442,7 +442,7 @@ export default function MenuItems() {
   // For the image in the grid display
   const getItemImageUrl = (item) => {
     if (item.image && item.image.startsWith('/uploads/')) {
-      return `http://localhost:5001${item.image}`;
+      return `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}${item.image}`;
     }
     return item.image || (item.item_type === 'food' ? FOOD_IMAGES[0] : DRINK_IMAGES[0]);
   };
@@ -719,7 +719,7 @@ export default function MenuItems() {
                       <Box
                         component="img"
                         src={imagePreview || (formData.image?.startsWith('/uploads/') 
-                          ? `http://localhost:5001${formData.image}` 
+                          ? `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}${formData.image}` 
                           : formData.image)}
                         alt="Preview"
                         sx={{

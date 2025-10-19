@@ -2,7 +2,9 @@ services:
   - type: web
     name: pos-system-backend
     env: node
-    buildCommand: cd server && npm install
+    region: oregon
+    plan: free
+    buildCommand: cd server && rm -rf node_modules && npm install --production=false && npm rebuild sqlite3
     startCommand: cd server && npm start
     envVars:
       - key: NODE_ENV

@@ -101,7 +101,7 @@ const WaiterMenu = () => {
       setPinLoading(true);
       setPinError('');
       
-      const response = await axios.post('http://localhost:5001/api/auth/login', {
+      const response = await axios.post('/api/auth/login', {
         pin_code: pin
       });
       
@@ -120,7 +120,7 @@ const WaiterMenu = () => {
       };
 
       // Submit the order with authentication
-      const orderResponse = await axios.post('http://localhost:5001/api/orders', orderData,
+      const orderResponse = await axios.post('/api/orders', orderData,
         {
           headers: {
             'Authorization': `Bearer ${authToken}`,
@@ -132,7 +132,7 @@ const WaiterMenu = () => {
       const order_id = orderResponse.data.id;
       
       // Update table status to 'occupied'
-      await axios.put(`http://localhost:5001/api/tables/${tableNumber}/status`, 
+      await axios.put(`/api/tables/${tableNumber}/status`, 
         {
           status: 'occupied',
           occupants: cart.reduce((sum, item) => sum + item.quantity, 0)

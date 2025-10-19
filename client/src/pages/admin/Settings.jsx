@@ -66,7 +66,7 @@ export default function Settings() {
     const fetchSettings = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5001/api/settings', {
+        const response = await axios.get('/api/settings', {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         
@@ -103,7 +103,7 @@ export default function Settings() {
   const handleSaveSettings = async () => {
     try {
       setLoading(true);
-      await axios.put('http://localhost:5001/api/settings', settings, {
+      await axios.put('/api/settings', settings, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       
