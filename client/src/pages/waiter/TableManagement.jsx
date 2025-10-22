@@ -98,7 +98,7 @@ export default function TableManagement() {
         });
         
         // Convert API response to match our component format
-        const formattedTables = response.data.map(table => ({
+        const formattedTables = (Array.isArray(response.data) ? response.data : []).map(table => ({
           id: table.id,
           table_number: table.table_number,
           status: table.status,

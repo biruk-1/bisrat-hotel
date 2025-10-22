@@ -58,7 +58,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../../components/Footer';
-import { initSocket, disconnectSocket } from '../../services/socket';
+import socketService from '../../services/socketService';
 
 // Add API URL constant
 const isLocalhost = window.location.hostname === 'localhost';
@@ -80,7 +80,7 @@ const fetchOrdersData = async (token) => {
     console.log('Initial orders response:', response.data);
     
     // Process orders and ensure all fields are properly formatted
-    const orders = response.data.map(order => {
+    const orders = (Array.isArray(response.data) ? response.data : []).map(order => {
       // Safely process items array
       const processedItems = Array.isArray(order.items) ? order.items
         .filter(item => item && typeof item === 'object') // Filter out null/invalid items
@@ -211,7 +211,7 @@ const fetchOrderWithItems = async (orderId, token) => {
       }
     } else {
       // If items are included, ensure they have all required fields
-      order.items = order.items.map(item => ({
+      order.items = (Array.isArray(order.items) ? order.items : []).map(item => ({
         id: item.id || `temp_${Date.now()}_${Math.random()}`,
         item_id: item.item_id || item.id,
         order_id: orderId,
@@ -352,23 +352,27 @@ export default function AdminDashboard() {
     }
 
     console.log('Setting up socket connection...');
-    const socket = initSocket(token);
-    if (socket) {
-      socket.on('orderUpdated', () => {
-        console.log('Order updated, fetching latest orders...');
-        fetchOrders();
-      });
+    socketService.connect(token).then(() => {
+      const socket = socketService.getSocket();
+      if (socket) {
+        socket.on('orderUpdated', () => {
+          console.log('Order updated, fetching latest orders...');
+          fetchOrders();
+        });
 
-      socket.on('newOrder', () => {
-        console.log('New order received, fetching latest orders...');
-        fetchOrders();
-      });
-    }
+        socket.on('newOrder', () => {
+          console.log('New order received, fetching latest orders...');
+          fetchOrders();
+        });
+      }
+    }).catch(error => {
+      console.error('Socket connection failed:', error);
+    });
 
     fetchOrders();
 
     return () => {
-      disconnectSocket();
+      socketService.disconnect();
     };
   }, []);
 
