@@ -36,17 +36,7 @@ if (process.env.CORS_ORIGIN) {
 }
 
 const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl, Postman)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      console.log('CORS blocked origin:', origin);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'https://bisrat-hotel.vercel.app', 'https://bs.diamond.et', 'https://order.bisrathotel.com.et'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -71,7 +61,7 @@ if (process.env.CORS_ORIGIN) {
 
 const io = socketIO(server, {
   cors: {
-    origin: socketCorsOrigins,
+    origin: ['http://localhost:5173', 'http://localhost:5174', 'https://bisrat-hotel.vercel.app', 'https://bs.diamond.et', 'https://order.bisrathotel.com.et'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
