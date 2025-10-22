@@ -11,7 +11,7 @@ const getApiBaseUrl = () => {
   }
   
   // For production, use the actual Render backend URL
-  return 'https://pos-system-2deh.onrender.com';
+  return 'https://pos-system-backend-ctvx.onrender.com';
 };
 
 export const API_BASE_URL = getApiBaseUrl();
