@@ -3099,7 +3099,18 @@ app.get('/debug/env', (req, res) => {
     PORT: process.env.PORT,
     JWT_SECRET: process.env.JWT_SECRET ? 'SET' : 'NOT SET',
     allEnvKeys: Object.keys(process.env).filter(key => key.includes('CORS') || key.includes('NODE') || key.includes('PORT')),
-    allowedOrigins: allowedOrigins
+    allowedOrigins: allowedOrigins,
+    corsConfig: corsOptions,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// CORS test endpoint
+app.get('/cors-test', (req, res) => {
+  res.json({
+    message: 'CORS test successful',
+    origin: req.headers.origin,
+    timestamp: new Date().toISOString()
   });
 });
 
