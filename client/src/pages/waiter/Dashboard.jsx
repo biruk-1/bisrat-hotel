@@ -222,7 +222,7 @@ export default function WaiterDashboard() {
                 Open Tables
               </Typography>
               <Typography variant="h4" component="div" fontWeight="bold" sx={{ mb: 1 }}>
-                {data.stats.openTables} / {data.tables.length}
+                {data?.stats?.openTables || 0} / {data?.tables?.length || 0}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Tables available for customers
@@ -260,7 +260,7 @@ export default function WaiterDashboard() {
                 Occupied Tables
               </Typography>
               <Typography variant="h4" component="div" fontWeight="bold" sx={{ mb: 1 }}>
-                {data.stats.occupiedTables}
+                {data?.stats?.occupiedTables || 0}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Tables with active customers
@@ -298,7 +298,7 @@ export default function WaiterDashboard() {
                 Active Orders
               </Typography>
               <Typography variant="h4" component="div" fontWeight="bold" sx={{ mb: 1 }}>
-                {data.stats.activeOrders}
+                {data?.stats?.activeOrders || 0}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Orders in progress
@@ -336,7 +336,7 @@ export default function WaiterDashboard() {
                 Total Sales
               </Typography>
               <Typography variant="h4" component="div" fontWeight="bold" sx={{ mb: 1 }}>
-                {formatCurrency(data.stats.totalSales)}
+                {formatCurrency(data?.stats?.totalSales || 0)}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Today's sales amount
@@ -351,7 +351,7 @@ export default function WaiterDashboard() {
         Table Status
       </Typography>
       <Grid container spacing={2} sx={{ mb: 4 }}>
-        {data.tables.map((table) => (
+        {(data?.tables || []).map((table) => (
           <Grid item xs={12} sm={6} md={3} key={table.id}>
             <Card 
               variant="outlined"
@@ -437,7 +437,7 @@ export default function WaiterDashboard() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.activeOrders.map((order) => (
+              {(data?.activeOrders || []).map((order) => (
                 <TableRow key={order.id} hover>
                   <TableCell component="th" scope="row">
                     <Typography variant="body2" fontWeight="medium">
