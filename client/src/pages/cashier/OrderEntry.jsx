@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import axios from '../../services/axiosConfig';
 import {
   Typography,
   Grid,
@@ -52,13 +52,8 @@ import {
 import { userOperations } from '../../services/db';
 import { API_ENDPOINTS } from '../../config/api';
 
-// Create axios instance with base URL
-const api = axios.create({
-  baseURL: API_ENDPOINTS.ITEMS.split('/api')[0],
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
+// Use the configured axios instance
+const api = axios;
 
 // Add request interceptor to add token
 api.interceptors.request.use(
