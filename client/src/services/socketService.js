@@ -284,6 +284,10 @@ class SocketService {
   isConnected() {
     return this.socket?.connected || false;
   }
+
+  getSocket() {
+    return this.socket;
+  }
 }
 
 const socketService = new SocketService();

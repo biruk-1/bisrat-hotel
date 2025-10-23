@@ -881,17 +881,13 @@ export default function AdminDashboard() {
     // Fetch data with the new date
     try {
       const url = `/api/admin/sales/custom?date=${formattedDate}&_t=${Date.now()}`;
-      const response = await fetch(url, {
+      const response = await axios.get(url, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
+      const data = response.data;
       console.log('Sales data received for date:', formattedDate, data);
 
       if (data.custom) {
