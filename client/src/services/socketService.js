@@ -54,6 +54,7 @@
 
 import io from 'socket.io-client';
 import { saveBillRequestOffline } from './offlineService';
+import { API_BASE_URL } from '../config/api.js';
 
 class SocketService {
   constructor() {
@@ -81,7 +82,7 @@ class SocketService {
         this.socket = null;
       }
 
-      this.socket = io(import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001', {
+      this.socket = io(API_BASE_URL, {
         auth: { token },
         transports: ['websocket', 'polling'],
         path: '/socket.io/',

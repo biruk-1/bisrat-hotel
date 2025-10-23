@@ -497,17 +497,13 @@ export default function AdminDashboard() {
       // Add cache buster
       params.append('_t', Date.now());
 
-      const response = await fetch(`${url}?${params.toString()}`, {
+      const response = await axios.get(`${url}?${params.toString()}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
+      const data = response.data;
       console.log('Sales data received:', data);
 
       // Update sales data with proper type conversion
