@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../store/slices/authSlice';
-import axios from 'axios';
+import axios from '../services/axiosConfig';
 import {
   Container,
   Typography,

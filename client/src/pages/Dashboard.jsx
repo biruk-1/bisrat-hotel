@@ -28,7 +28,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import axios from 'axios';
+import axios from '../services/axiosConfig';
 import { Refresh as RefreshIcon } from '@mui/icons-material';
 import StatCard from '../components/StatCard';
 import { formatCurrency } from '../utils/currencyFormatter';

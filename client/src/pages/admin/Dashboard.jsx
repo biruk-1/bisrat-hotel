@@ -1,7 +1,7 @@
 import { API_BASE_URL } from '../../config/api.js';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import axios from '../../services/axiosConfig';
 import io from 'socket.io-client';
 import {
   Box,

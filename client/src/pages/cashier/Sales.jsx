@@ -1,7 +1,7 @@
 import { API_BASE_URL } from '../../config/api.js';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import axios from '../../services/axiosConfig';
 import io from 'socket.io-client';
 import {
   Box,
@@ -144,7 +144,7 @@ export default function CashierSales() {
       const response = await axios.get(`${BASE_URL}/api/waiters`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setWaiters(response.data);
+      setWaiters(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Error fetching waiters:', error);
       setSnackbar({

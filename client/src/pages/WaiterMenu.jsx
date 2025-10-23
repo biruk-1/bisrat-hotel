@@ -37,7 +37,7 @@ import RestaurantIcon from '@mui/icons-material/Restaurant';
 import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import axios from 'axios';
+import axios from '../services/axiosConfig';
 
 // Intercept and mock extension requests to prevent CORS errors
 const interceptExtensionRequests = () => {
@@ -219,7 +219,7 @@ const WaiterMenu = () => {
           throw new Error(`Network error: ${networkErr.message}. Is the server running?`);
         });
       
-      setItems(response.data);
+      setItems(Array.isArray(response.data) ? response.data : []);
       setLoading(false);
     } catch (err) {
       console.error('Error fetching menu items:', err);
@@ -241,7 +241,7 @@ const WaiterMenu = () => {
       if (!response) return;
       
       // Show all tables (waiters can take orders for occupied tables too)
-      setTables(response.data);
+      setTables(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       console.error('Error fetching tables:', err);
     }
