@@ -19,7 +19,7 @@ import {
   IconButton,
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
-import axios from 'axios';
+import axios from '../services/axiosConfig';
 
 function Orders() {
   const [orders, setOrders] = useState([]);

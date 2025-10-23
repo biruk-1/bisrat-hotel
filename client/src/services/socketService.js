@@ -113,7 +113,9 @@ class SocketService {
       const connectTimeout = setTimeout(() => {
         if (!this.socket?.connected) {
           console.log('Socket connection timeout');
-          this.socket.close();
+          if (this.socket) {
+            this.socket.close();
+          }
           reject(new Error('Connection timeout'));
         }
       }, 10000);
