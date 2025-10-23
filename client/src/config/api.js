@@ -8,6 +8,12 @@ const getApiBaseUrl = () => {
     hostname: window.location.hostname
   });
   
+  // Force correct backend URL for production
+  if (window.location.hostname === 'bisrat-hotel.vercel.app') {
+    console.log('FORCING production backend URL for Vercel');
+    return 'https://pos-system-backend-ctvx.onrender.com';
+  }
+  
   // Check if we have an environment variable for the API URL
   if (import.meta.env.VITE_API_BASE_URL) {
     console.log('Using VITE_API_BASE_URL:', import.meta.env.VITE_API_BASE_URL);

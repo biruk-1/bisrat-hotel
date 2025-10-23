@@ -305,10 +305,11 @@ export default function AdminDashboard() {
       setLoading(true);
       console.log('Fetching all orders...');
       const data = await fetchOrdersData(token);
-      console.log(`Fetched ${data.length} orders, latest order ID:`, data[0]?.id);
+      const ordersArray = Array.isArray(data) ? data : [];
+      console.log(`Fetched ${ordersArray.length} orders, latest order ID:`, ordersArray[0]?.id);
       
       // Store all orders
-      setOrders(data);
+      setOrders(ordersArray);
       
       // Apply date filtering
       if (dateRange.startDate) {
@@ -317,7 +318,7 @@ export default function AdminDashboard() {
         const endDate = dateRange.endDate ? new Date(dateRange.endDate) : new Date();
         endDate.setHours(23, 59, 59, 999);
         
-        const filtered = data.filter(order => {
+        const filtered = ordersArray.filter(order => {
           const orderDate = new Date(order.created_at);
           return orderDate >= startDate && orderDate <= endDate;
         });
@@ -329,7 +330,7 @@ export default function AdminDashboard() {
         
         setFilteredOrders(filtered);
       } else {
-        setFilteredOrders(data);
+        setFilteredOrders(ordersArray);
       }
     } catch (error) {
       console.error('Error fetching orders:', error);
