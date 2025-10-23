@@ -11,7 +11,7 @@ const getApiBaseUrl = () => {
   // Force correct backend URL for production
   if (window.location.hostname === 'bisrat-hotel.vercel.app') {
     console.log('FORCING production backend URL for Vercel');
-    return 'https://pos-system-2deh.onrender.com';
+    return 'https://pos-system-backend-ctvx.onrender.com';
   }
   
   // Check if we have an environment variable for the API URL
@@ -28,7 +28,7 @@ const getApiBaseUrl = () => {
   
   // For production, use the actual Render backend URL
   console.log('Using production backend URL');
-  return 'https://pos-system-2deh.onrender.com';
+  return 'https://pos-system-backend-ctvx.onrender.com';
 };
 
 export const API_BASE_URL = getApiBaseUrl();
