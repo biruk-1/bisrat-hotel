@@ -137,7 +137,7 @@ export default function TableManagement() {
             Authorization: `Bearer ${token}`
           }
         });
-        setMenuItems(response.data);
+        setMenuItems(Array.isArray(response.data) ? response.data : []);
       } catch (err) {
         console.error('Failed to load menu items:', err);
       }

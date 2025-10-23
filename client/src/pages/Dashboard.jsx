@@ -93,8 +93,8 @@ function Dashboard() {
             }),
           ]);
 
-          const orders = ordersRes.data;
-          const products = productsRes.data;
+          const orders = Array.isArray(ordersRes.data) ? ordersRes.data : [];
+          const products = Array.isArray(productsRes.data) ? productsRes.data : [];
 
           const totalSales = orders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
           const recentOrders = orders.slice(0, 5);

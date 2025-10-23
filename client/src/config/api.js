@@ -1,16 +1,27 @@
 // API Configuration
 const getApiBaseUrl = () => {
+  console.log('Environment check:', {
+    VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL,
+    MODE: import.meta.env.MODE,
+    DEV: import.meta.env.DEV,
+    PROD: import.meta.env.PROD,
+    hostname: window.location.hostname
+  });
+  
   // Check if we have an environment variable for the API URL
   if (import.meta.env.VITE_API_BASE_URL) {
+    console.log('Using VITE_API_BASE_URL:', import.meta.env.VITE_API_BASE_URL);
     return import.meta.env.VITE_API_BASE_URL;
   }
   
   // Fallback to localhost for development
-  if (import.meta.env.DEV) {
+  if (import.meta.env.DEV || window.location.hostname === 'localhost') {
+    console.log('Using localhost for development');
     return 'http://localhost:5001';
   }
   
   // For production, use the actual Render backend URL
+  console.log('Using production backend URL');
   return 'https://pos-system-backend-ctvx.onrender.com';
 };
 

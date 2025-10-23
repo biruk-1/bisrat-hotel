@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Environment Test</title>
+</head>
+<body>
+    <h1>Environment Variables Test</h1>
+    <div id="results"></div>
+    
+    <script type="module">
+        // Test environment variables
+        const results = document.getElementById('results');
+        
+        results.innerHTML = `
+            <h3>Environment Variables:</h3>
+            <p><strong>VITE_API_BASE_URL:</strong> ${import.meta.env.VITE_API_BASE_URL || 'NOT SET'}</p>
+            <p><strong>MODE:</strong> ${import.meta.env.MODE}</p>
+            <p><strong>DEV:</strong> ${import.meta.env.DEV}</p>
+            <p><strong>PROD:</strong> ${import.meta.env.PROD}</p>
+            <p><strong>Hostname:</strong> ${window.location.hostname}</p>
+            <p><strong>All env vars:</strong></p>
+            <pre>${JSON.stringify(import.meta.env, null, 2)}</pre>
+            
+            <h3>API Configuration Test:</h3>
+            <div id="api-test"></div>
+        `;
+        
+        // Test API configuration
+        try {
+            const { API_BASE_URL } = await import('./config/api.js');
+            document.getElementById('api-test').innerHTML = `
+                <p><strong>Computed API_BASE_URL:</strong> ${API_BASE_URL}</p>
+            `;
+        } catch (error) {
+            document.getElementById('api-test').innerHTML = `
+                <p><strong>Error loading API config:</strong> ${error.message}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
