@@ -69,7 +69,7 @@ export default function CashierLayout() {
   ];
 
   // Filter menu items based on user role
-  const filteredMenuItems = menuItems.filter(item => 
+  const filteredMenuItems = (menuItems || []).filter(item => 
     item.roles.includes(user?.role || '')
   );
 
