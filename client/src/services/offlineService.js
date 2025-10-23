@@ -330,7 +330,9 @@ export const saveUsersData = async (users) => {
     const tx = db.transaction('users', 'readwrite');
     const store = tx.objectStore('users');
 
-    const uniqueUsers = users.reduce((acc, user) => {
+    // Ensure users is an array
+    const usersArray = Array.isArray(users) ? users : [];
+    const uniqueUsers = usersArray.reduce((acc, user) => {
       if (!user.phone_number || user.phone_number === '') {
         acc.push(user);
         return acc;
@@ -397,7 +399,9 @@ export const saveWaitersData = async (waiters) => {
     const tx = db.transaction('waiters', 'readwrite');
     const store = tx.objectStore('waiters');
 
-    await Promise.all(waiters.map(waiter => store.put({
+    // Ensure waiters is an array
+    const waitersArray = Array.isArray(waiters) ? waiters : [];
+    await Promise.all(waitersArray.map(waiter => store.put({
       id: waiter.id,
       name: waiter.name,
       username: waiter.username,
@@ -627,7 +631,9 @@ export const saveMenuItemsOffline = async (items) => {
     const store = tx.objectStore('menuItems');
 
     await store.clear();
-    await Promise.all(items.map(item => store.put(item)));
+    // Ensure items is an array
+    const itemsArray = Array.isArray(items) ? items : [];
+    await Promise.all(itemsArray.map(item => store.put(item)));
     await tx.done;
 
     localStorage.setItem(MENU_ITEMS_KEY, JSON.stringify(items));
@@ -660,7 +666,9 @@ export const saveTablesOffline = async (tables) => {
     const store = tx.objectStore('tables');
 
     await store.clear();
-    await Promise.all(tables.map(table => store.put(table)));
+    // Ensure tables is an array
+    const tablesArray = Array.isArray(tables) ? tables : [];
+    await Promise.all(tablesArray.map(table => store.put(table)));
     await tx.done;
 
     localStorage.setItem(TABLES_DATA_KEY, JSON.stringify(tables));
